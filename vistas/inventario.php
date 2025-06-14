@@ -4037,7 +4037,11 @@ $('#fechaDelR').datepicker({
 
 	$( "#buscar_baja" ).click(function() {
 		//tablabaja($("#Estatus_baja").val(), 1);
-		generarInventario_tablebajas();
+		let estatusb="";
+		if($("#baja_solicitante").is(':checked')) { estatusb = "baja"; }
+		if($("#baja_direc_financiera").is(':checked')) { estatusb = "baja2"; }
+		if($("#baja_contabilidad").is(':checked')) { estatusb = "baja3"; }
+		generarInventario_tablebajas(estatusb);
   });
 
 	$( "#exportar_baja" ).click(function() {

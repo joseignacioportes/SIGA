@@ -42,6 +42,8 @@
 		public $Filtro_Departamento;
 		public $Filtro_UbicacionPrimariaProcedencia;
 		public $Filtro_UbicacionSecundariaProcedencia;
+		public $Filtro_UbicacionPrimariaDestino;
+		public $Filtro_UbicacionSecundariaDestino;
 		public $Filtro_UbicacionPrimaria;
 		public $Filtro_Area;
 		public $Filtro_UbicacionEspecifica;
@@ -463,8 +465,19 @@
 							case "Realiza":
 								array_push($arrayFiltrosExcel, " AND (SELECT TOP(1) Act.Realiza FROM siga_actividades Act WHERE Act.Id_Area = S.Id_Area AND Act.Id_Activo = S.Id_Activo ORDER BY Act.Fech_Inser DESC) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
 								break;
-
-
+							// 69. Fecha Reubicacion	
+							case "Fecha_Reubicacion":
+								array_push($arrayFiltrosExcel, " AND CAST(SR.Fech_Inser as DATE) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;	
+							// 70. Ubicación Primaria Destino
+							case "UbicacionPrimariaDestino":
+								array_push($arrayFiltrosExcel, " AND (select Id_Ubic_Prim from siga_cat_ubic_prim T where T.Id_Ubic_Prim=SR.Id_Ubic_Prim) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								
+								break;
+							// 71. Ubicación Secundaria Destino
+							case "UbicacionSecundariaDestino":
+								array_push($arrayFiltrosExcel, " AND (select Id_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=SR.Id_Ubic_Sec) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;	
 							// PROVEEDORES
 							// 41. Numero de Orden de Compra, 42. Fecha de Factura, 43. Número de Factura, 44. UUID, 45. Folio Fiscal, 46, Núm. Contrato, 47. Núm. Contrato
 							// 48. Vida Util CHS, 49. Fecha Vencimiento, 50. Nombre Proveedor, 51. Contacto, 52. Teléfono, 53. Doc. Recibida, 54, Correo
@@ -514,7 +527,7 @@
 						// Mostrar los activos basados en el historico de reubicaciones por area
 						if($parametrosConsulta->estatus == "tablereubicacion") {
 							if($FechInicio!=""&&$FechFin!="") {
-								$Area="	and SR.Fech_Inser between convert(date,'".$FechInicio."') and convert(date,'".$FechFin."') ";
+								$Area="	and CONVERT(DATE, SR.Fech_Inser) BETWEEN '".$FechInicio."' and '".$FechFin."' ";
 							}
 							else {
 								if($FechInicio!=""&&$FechFin=="") {
@@ -556,6 +569,8 @@
 					(select Desc_Tipo_Activo from siga_cat_tipo_activo T where T.Id_Tipo_Activo=S.Id_Tipo_Activo) as TipoActivo,DescCorta,
 					(select Desc_Ubic_Prim from siga_cat_ubic_prim T where T.Id_Ubic_Prim=S.Id_Ubic_Prim) as Id_Ubic_Prim,
 					(select Desc_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=S.Id_Ubic_Sec) as Id_Ubic_Sec,
+					
+
 					S.Especifica AS UbicacionEspecifica,
 					--isnull(S.Fech_Inser,'') as FechaAlta,
 					--FORMAT(CAST(S.Fech_Inser AS DATE),'yyyy-MM-dd') as FechaAlta,
@@ -640,6 +655,8 @@
 				if($parametrosConsulta->estatus == "tablereubicacion") {
 					$sqltotal .= "	(select top 1  Desc_Ubic_Prim from siga_cat_ubic_prim where (select top 1 HR.Id_Ubic_Prim from siga_historico_reubicacion HR where HR.Id_Activo_Reubicacion=SR.Id_Activo_Reubicacion)=siga_cat_ubic_prim.Id_Ubic_Prim) AS UbicacionPrimariaProcedencia,
 									(select top 1  Desc_Ubic_Sec from siga_cat_ubic_sec where (select top 1 HR.Id_Ubic_Sec from siga_historico_reubicacion HR where HR.Id_Activo_Reubicacion=SR.Id_Activo_Reubicacion)=siga_cat_ubic_sec.Id_Ubic_Sec) AS UbicacionSecundariaProcedencia,
+									(select Desc_Ubic_Prim from siga_cat_ubic_prim T where T.Id_Ubic_Prim=SR.Id_Ubic_Prim) as UbicacionPrimariaDestino,
+									(select Desc_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=SR.Id_Ubic_Sec) as UbicacionSecundariaDestino,
 									(select Desc_Ubic_Prim from siga_cat_ubic_prim T where T.Id_Ubic_Prim=SR.Id_Ubic_Prim) as UbicacionPrimariaReu,
 									(select Desc_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=SR.Id_Ubic_Sec) as UbicacionSecundariaReu,
 									Ubic_Especifica,
@@ -649,6 +666,8 @@
 					// No aplica para otras tablas que no sean Reubicación
 					$sqltotal .= "	'' AS UbicacionPrimariaProcedencia,
 									'' AS UbicacionSecundariaProcedencia,
+									'' AS UbicacionPrimariaDestino,
+									'' AS UbicacionSecundariaDestino,
 									'' as Id_AreaReu,";
 				}
 				
@@ -688,7 +707,9 @@
 				*/
 				// Ejecución de la sentencia de consulta
 				$reader = $conn->execute($sql);
-
+				echo "</pre>";
+				echo $sql;
+				echo "<pre>";
 				if($reader) {
 					// Recorre los registros encontrados
 					while($row = $_proveedor->fetch_array($reader, 0)) {
@@ -714,6 +735,8 @@
 							"Num_Empleado" => $row["Num_Empleado"],
 							"Id_Ubic_Prim" => $row["Id_Ubic_Prim"],
 							"Id_Ubic_Sec" => $row["Id_Ubic_Sec"],
+							"UbicacionPrimariaDestino" => $row["UbicacionPrimariaDestino"],
+							"UbicacionSecundariaDestino" => $row["UbicacionSecundariaDestino"],
 							"UbicacionEspecifica" => $row["UbicacionEspecifica"],
 							"ParticipaCertificacion" => $row["ParticipaCertificacion"],
 							"ParticipaSeguros" => $row["ParticipaSeguros"],
@@ -855,6 +878,9 @@
 				// Ejecución de la cadena
 				$sql = "EXEC sp_siga_activo_fijo_inventario_filtro_excel_get " . implode(",", $arrayParametros);
 				$reader = $conn->execute($sql);
+				//echo $sql;
+
+
 				if($reader) {
 					// Recorre los registros encontrados y los almacena en un arreglo
 					while($row = $_proveedor->fetch_array($reader, 0)) {

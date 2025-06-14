@@ -104,7 +104,7 @@
 
 	<script type="text/javascript">
 		// Función que genera el datatable con la lista de columnas dinámicas
-		function generarInventario_<?php echo($NombreTabla); ?>() {
+		function generarInventario_<?php echo($NombreTabla); ?>(estatusb=null) {
 			var estatusSrc = "<?php echo($NombreTabla); ?>";
 			<?php if($NombreTabla == "tablebajas") { ?>
 				// Elimina los filtros seleccionados previamente en el campo acumulado de filtros encadenados Tipo Excel
@@ -114,10 +114,11 @@
 				$("#lstFiltros_tablebajas").html("");
 
 				//
-				var EstatusBaja = $("#Estatus_baja").val();
-				if(EstatusBaja == 0) { $("#baja_solicitante").prop("checked", true); }
-				else { $("#baja_contabilidad").prop("checked", true); }
-				
+				if(estatusb==null){
+					var EstatusBaja = $("#Estatus_baja").val();
+					if(EstatusBaja == 0) { $("#baja_solicitante").prop("checked", true); }
+					else { $("#baja_contabilidad").prop("checked", true); }
+				}
 				if($("#baja_solicitante").is(':checked')) { estatusSrc = "baja"; }
 				if($("#baja_direc_financiera").is(':checked')) { estatusSrc = "baja2"; }
 				if($("#baja_contabilidad").is(':checked')) { estatusSrc = "baja3"; }

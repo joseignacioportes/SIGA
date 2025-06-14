@@ -392,23 +392,23 @@ if($Respuesta["data"][0]["Id_Actividad"]==''){
 					</thead>
 					<tbody class="tbody">
 						<tr>
-							<td class="td" style="width: 10%;<?php echo $style_td;?>">Cantidad:</td>
+							<td class="td" style="width: 8%;<?php echo $style_td;?>">Cantidad:</td>
 							<td class="td" style="width: 10%;<?php echo $style_td;?>">Unidad:</td>
 							<td class="td" style="width: 10%;<?php echo $style_td;?>">Marca:</td>
 							<td class="td" style="width: 20%;<?php echo $style_td;?>">Modelo:</td>
 							<td class="td" style="width: 30%;<?php echo $style_td;?>">Descripción:</td>
-							<td class="td" style="width: 20%;<?php echo $style_td;?>">No. Serie:</td>
+							<td class="td" style="width: 22%;<?php echo $style_td;?>">No. Serie:</td>
 						</tr>
 						<?php
 							for($n=0; $n<$Accesorios_Nota_Salida["totalCount"]; $n++) {
 						?>
 								<tr>
-									<td class="td"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Cantidad_DNS"]); ?></td>
-									<td class="td"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Unidad_DNS"]); ?></td>
-									<td class="td"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Marca_DNS"]); ?></td>
-									<td class="td"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Modelo_DNS"]); ?></td>
-									<td class="td"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Descripcion_DNS"]); ?></td>
-									<td class="td"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["No_Serie_DNS"]); ?></td>
+									<td class="td" style="width: 8px; word-wrap: break-word;overflow-wrap: break-word; white-space: normal; font-size:10px"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Cantidad_DNS"]); ?></td>
+									<td class="td" style="width: 10px; word-wrap: break-word;overflow-wrap: break-word; white-space: normal; font-size:10px"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Unidad_DNS"]); ?></td>
+									<td class="td" style="width: 10px; word-wrap: break-word;overflow-wrap: break-word; white-space: normal; font-size:10px"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Marca_DNS"]); ?></td>
+									<td class="td" style="width: 20px; word-wrap: break-word;overflow-wrap: break-word; white-space: normal; font-size:10px"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Modelo_DNS"]); ?></td>
+									<td class="td" style="width: 30px; word-wrap: break-word;overflow-wrap: break-word; white-space: normal; font-size:10px"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["Descripcion_DNS"]); ?></td>
+									<td class="td" style="width: 22px; word-wrap: break-word;overflow-wrap: break-word; white-space: normal; font-size:10px"><?php echo formatoTextoValido($Accesorios_Nota_Salida["data"][$n]["No_Serie_DNS"]); ?></td>
 								</tr>
 						<?php
 							}
@@ -918,16 +918,18 @@ if($Respuesta["data"][0]["Id_Actividad"]==''){
 							if($Firma_Base64 != "") { ?>
 							Firma
 								<br>
-							<?php
-								$dato   = 'data:image/jpeg;base64,';
-								$pos = strpos($Firma_Base64, $dato);
-
-								if ($pos === false) { ?>
-								<img src="<?php echo  $Firma_Base64;?> ">
-							<?php  } else { ?>
-								<img alt="" src="data:image/png;base64,<?php $baseFromJavascript = "data:image/jpeg;base64," . $Firma_Base64 . ""; echo preg_replace('#^data:image/\w+;base64,#i', '', $baseFromJavascript); ?>" width="120" height="60" />
-							<?php } ?>
-
+								<?php
+								// Si ya viene con prefijo, lo usas directamente
+								if (strpos($Firma_Base64, 'data:image') === 0) { ?>
+										<img src="<?php echo $Firma_Base64; ?>" width="120" height="60">
+								<?php 
+								} else { 
+										// Si NO tiene prefijo, lo agregas
+										$mime = 'image/jpeg'; // o image/png según tu caso real
+										?>
+										<img src="data:<?php echo $mime; ?>;base64,<?php echo $Firma_Base64; ?>" width="120" height="60">
+								<?php 
+								} ?>
 								<br>
 								FIRMADO POR:
 								<br>
