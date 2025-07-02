@@ -1343,15 +1343,17 @@ public function llenarDataTable($draw,$columns,$order,$start,$length,$search,$Id
 		}else{
 			
 			$Fechas_Ticket="
+				CONVERT(BIGINT, FORMAT(ST.Fech_Inser, 'yyyyMMddHHmmss')) as Fecha_Num,
 				CONVERT(VARCHAR(10),ST.Fech_Solicitud,103) +' '+SUBSTRING(CONVERT(VARCHAR(20), ST.Fech_Solicitud, 9), 13, 5)+' '+SUBSTRING(CONVERT(VARCHAR(30), ST.Fech_Solicitud, 9), 25, 2) as Fecha_Solicitud, 
+				CONVERT(BIGINT, FORMAT(ST.Fech_Solicitud, 'yyyyMMddHHmmss')) as Fecha_Solicitud_Num,
 				FORMAT(ST.Fech_Seguimiento,'dd/MM/yyyy hh:mm:ss') as Fecha_Seguimiento,
+				CONVERT(BIGINT, FORMAT(ST.Fech_Seguimiento, 'yyyyMMddHHmmss')) as Fecha_Seguimiento_Num,
 				FORMAT(ST.Fech_Espera_Cierre,'dd/MM/yyyy hh:mm:ss') as Fecha_Esp_Cierre,
+				CONVERT(BIGINT, FORMAT(ST.Fech_Espera_Cierre, 'yyyyMMddHHmmss')) as Fecha_Esp_Cierre_Num,
 				FORMAT(ST.Fech_Cierre,'dd/MM/yyyy hh:mm:ss') as Fecha_Cierre,
+				CONVERT(BIGINT, FORMAT(ST.Fech_Cierre, 'yyyyMMddHHmmss')) as Fecha_Cierre_Num,
 			";
 		}
-		
-		
-		
 		
 		//Fin Filtros Busqueda 
 		$this->_proveedor->execute("select * from (SELECT 
@@ -1465,6 +1467,11 @@ public function llenarDataTable($draw,$columns,$order,$start,$length,$search,$Id
 					"Num_Calif"=> $row["Num_Calif"],
 					"Url_archivo" => rtrim(ltrim($row["Url_archivo"])),
 					"Fecha" => $row["Fecha"],
+					"Fecha_Num"=> $row["Fecha_Num"],
+					"Fecha_Solicitud_Num"=> $row["Fecha_Solicitud_Num"],
+					"Fecha_Seguimiento_Num"=> $row["Fecha_Seguimiento_Num"],
+					"Fecha_Esp_Cierre_Num"=> $row["Fecha_Esp_Cierre_Num"],
+					"Fecha_Cierre_Num"=> $row["Fecha_Cierre_Num"],
 					"Nom_Area" => $row["Nom_Area"],
 					"Nombre_Usuario" => $row["Nombre_Usuario"],
 					"Nombre_Seccion" => $row["Nombre_Seccion"],
@@ -1672,10 +1679,15 @@ public function llenarDataTable($draw,$columns,$order,$start,$length,$search,$Id
 		}else{		
 				
 			$Fechas_Ticket="
+				CONVERT(BIGINT, FORMAT(ST.Fech_Inser, 'yyyyMMddHHmmss')) as Fecha_Num,
 				CONVERT(VARCHAR(10),ST.Fech_Solicitud,103) +' '+SUBSTRING(CONVERT(VARCHAR(20), ST.Fech_Solicitud, 9), 13, 5)+' '+SUBSTRING(CONVERT(VARCHAR(30), ST.Fech_Solicitud, 9), 25, 2) as Fecha_Solicitud, 
+				CONVERT(BIGINT, FORMAT(ST.Fech_Solicitud, 'yyyyMMddHHmmss')) as Fecha_Solicitud_Num,
 				FORMAT(ST.Fech_Seguimiento,'dd/MM/yyyy hh:mm:ss') as Fecha_Seguimiento,
+				CONVERT(BIGINT, FORMAT(ST.Fech_Seguimiento, 'yyyyMMddHHmmss')) as Fecha_Seguimiento_Num,
 				FORMAT(ST.Fech_Espera_Cierre,'dd/MM/yyyy hh:mm:ss') as Fecha_Esp_Cierre,
+				CONVERT(BIGINT, FORMAT(ST.Fech_Espera_Cierre, 'yyyyMMddHHmmss')) as Fecha_Esp_Cierre_Num,
 				FORMAT(ST.Fech_Cierre,'dd/MM/yyyy hh:mm:ss') as Fecha_Cierre,
+				CONVERT(BIGINT, FORMAT(ST.Fech_Cierre, 'yyyyMMddHHmmss')) as Fecha_Cierre_Num,
 			";
 		}
 
@@ -1763,6 +1775,11 @@ public function llenarDataTable($draw,$columns,$order,$start,$length,$search,$Id
 					"Num_Calif"=> $row["Num_Calif"],
 					"Url_archivo" => rtrim(ltrim($row["Url_archivo"])),
 					"Fecha" => $row["Fecha"],
+					"Fecha_Num"=> $row["Fecha_Num"],
+					"Fecha_Solicitud_Num"=> $row["Fecha_Solicitud_Num"],
+					"Fecha_Seguimiento_Num"=> $row["Fecha_Seguimiento_Num"],
+					"Fecha_Esp_Cierre_Num"=> $row["Fecha_Esp_Cierre_Num"],
+					"Fecha_Cierre_Num"=> $row["Fecha_Cierre_Num"],
 					"Nom_Area" => $row["Nom_Area"],
 					"Nombre_Usuario" => $row["Nombre_Usuario"],
 					"Nombre_Seccion" => $row["Nombre_Seccion"],

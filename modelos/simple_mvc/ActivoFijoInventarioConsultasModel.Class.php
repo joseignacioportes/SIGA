@@ -162,12 +162,28 @@
 				}
 				
 				if ($parametrosConsulta->order != '' && count($parametrosConsulta->order) > 0) {
+					
+					
 					// Orden: Ascendente o Descendente
 					$ordenAscDesc = $parametrosConsulta->order[0];
 					// Nombre de la columna a partir del index de la columna seleccionada
 					$nombreColumnaOrdanamiento = $parametrosConsulta->columns[$ordenAscDesc["column"]];
 					if($nombreColumnaOrdanamiento["data"] != "function") {
-						$ordenamiento = " ORDER BY " . $nombreColumnaOrdanamiento["data"] . " " . $ordenAscDesc["dir"];
+						//echo $nombreColumnaOrdanamiento["data"];
+						if(
+							$nombreColumnaOrdanamiento["data"]=="siga_activos_fch_recepcion_equipo" ||
+							$nombreColumnaOrdanamiento["data"]=="FechaAlta" ||
+							$nombreColumnaOrdanamiento["data"]=="siga_activos_fch_operacion" ||
+							$nombreColumnaOrdanamiento["data"]=="FechaBaja_UsrSolicitante" ||
+							$nombreColumnaOrdanamiento["data"]=="FechaBaja_UsrDirFinanciera" ||
+							$nombreColumnaOrdanamiento["data"]=="FechaBaja_UsrContabilidad" ||
+							$nombreColumnaOrdanamiento["data"]=="Fecha_Reubicacion" 
+						)
+						{
+							$ordenamiento = " ORDER BY CONVERT(date," . $nombreColumnaOrdanamiento["data"] . ", 23) " . $ordenAscDesc["dir"];
+						}else{
+							$ordenamiento = " ORDER BY " . $nombreColumnaOrdanamiento["data"] . " " . $ordenAscDesc["dir"];
+						}
 					}
 				}
 
@@ -447,10 +463,12 @@
 								break;
 							// 21. Ubicación Primaria Procedencia
 							case "UbicacionPrimariaProcedencia":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
 								array_push($arrayFiltrosExcel, " AND (SELECT TOP(1) H.Id_Ubic_Prim FROM siga_historico_reubicacion H WHERE H.Id_Activo = S.Id_Activo) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
 								break;
 							// 22. Ubicación Secundaria Procedencia
 							case "UbicacionSecundariaProcedencia":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
 								array_push($arrayFiltrosExcel, " AND (SELECT TOP(1) H.Id_Ubic_Sec FROM siga_historico_reubicacion H WHERE H.Id_Activo = S.Id_Activo) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
 								break;
 							// 34. Monto Factura
@@ -471,14 +489,52 @@
 								break;	
 							// 70. Ubicación Primaria Destino
 							case "UbicacionPrimariaDestino":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
 								array_push($arrayFiltrosExcel, " AND (select Id_Ubic_Prim from siga_cat_ubic_prim T where T.Id_Ubic_Prim=SR.Id_Ubic_Prim) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
 								
 								break;
 							// 71. Ubicación Secundaria Destino
 							case "UbicacionSecundariaDestino":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
 								array_push($arrayFiltrosExcel, " AND (select Id_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=SR.Id_Ubic_Sec) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;
+							case "Id_ActivoPadre":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND (select Id_Activo from siga_activos SA where SA.Id_Activo=S.Id_ActivoPadre) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
 								break;	
-							// PROVEEDORES
+							case "Destino_Final":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND (select Id_Destino_final from siga_cast_destino_final DF where DF.Id_Destino_final=SB.Destino) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;				
+							case "Ubic_Especifica_Procedencia":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND (SELECT TOP(1) H.Ubic_Especifica FROM siga_historico_reubicacion H WHERE H.Id_Activo = S.Id_Activo) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;
+							case "Ubic_Especifica_Destino":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND (select TOP(1) H.Ubic_Especifica from siga_reubicacion_activo H where H.Id_Activo=SR.Id_Activo) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;
+							case "Usuario_Resguardo_Procedencia":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND (SELECT TOP(1) H.Responsable_Activo_Procedencia FROM siga_historico_reubicacion H WHERE H.Id_Activo_Reubicacion = SR.Id_Activo_Reubicacion) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;
+							case "Usuario_Resguardo_Destino":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND SR.Nom_Usuario_Reponsable IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;
+							case "Centro_Costo_Procedencia":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND (SELECT TOP(1) H.Centro_Costos FROM siga_historico_reubicacion H WHERE H.Id_Activo = S.Id_Activo) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;
+							case "Centro_Costo_Destino":
+								if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+								array_push($arrayFiltrosExcel, " AND (SELECT TOP(1) R.Centro_Costos FROM siga_reubicacion_activo R WHERE R.Id_Activo = S.Id_Activo) IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+								break;
+							case "Usuario_Solicitante_Reubicacion":
+									if($parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) }!="")
+									array_push($arrayFiltrosExcel, " AND SR.Usr_Inser IN (" . $parametrosConsulta->{ "Filtro_" . trim($lstFiltrosSuperior[$i]) } . ") ");
+									break;	
+									// PROVEEDORES
 							// 41. Numero de Orden de Compra, 42. Fecha de Factura, 43. Número de Factura, 44. UUID, 45. Folio Fiscal, 46, Núm. Contrato, 47. Núm. Contrato
 							// 48. Vida Util CHS, 49. Fecha Vencimiento, 50. Nombre Proveedor, 51. Contacto, 52. Teléfono, 53. Doc. Recibida, 54, Correo
 							case "NumOrdenCompra":
@@ -569,8 +625,9 @@
 					(select Desc_Tipo_Activo from siga_cat_tipo_activo T where T.Id_Tipo_Activo=S.Id_Tipo_Activo) as TipoActivo,DescCorta,
 					(select Desc_Ubic_Prim from siga_cat_ubic_prim T where T.Id_Ubic_Prim=S.Id_Ubic_Prim) as Id_Ubic_Prim,
 					(select Desc_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=S.Id_Ubic_Sec) as Id_Ubic_Sec,
-					
-
+					(select Nombre_Activo from siga_activos SA where SA.Id_Activo=S.Id_ActivoPadre) as Id_ActivoPadre,
+					case when ParticipaPre=1 then 'Si'
+						else 'No' end as ParticipaPre,
 					S.Especifica AS UbicacionEspecifica,
 					--isnull(S.Fech_Inser,'') as FechaAlta,
 					--FORMAT(CAST(S.Fech_Inser AS DATE),'yyyy-MM-dd') as FechaAlta,
@@ -659,6 +716,14 @@
 									(select Desc_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=SR.Id_Ubic_Sec) as UbicacionSecundariaDestino,
 									(select Desc_Ubic_Prim from siga_cat_ubic_prim T where T.Id_Ubic_Prim=SR.Id_Ubic_Prim) as UbicacionPrimariaReu,
 									(select Desc_Ubic_Sec from siga_cat_ubic_sec T where T.Id_Ubic_Sec=SR.Id_Ubic_Sec) as UbicacionSecundariaReu,
+									(select top 1 Ubic_Especifica from siga_historico_reubicacion HR where HR.Id_Activo_Reubicacion=SR.Id_Activo_Reubicacion) AS Ubic_Especifica_Procedencia,
+									SR.Ubic_Especifica as Ubic_Especifica_Destino,
+									(select top 1  CONCAT(No_Usuario,' ',Nombre_Usuario) from siga_usuarios where (select top 1 HR.Responsable_Activo_Procedencia from siga_historico_reubicacion HR where HR.Id_Activo_Reubicacion=SR.Id_Activo_Reubicacion)=siga_usuarios.Nombre_Usuario) AS Usuario_Resguardo_Procedencia,
+									(select top 1  CONCAT(No_Usuario,' ',Nombre_Usuario) from siga_usuarios SU where SU.Nombre_Usuario=SR.Nom_Usuario_Reponsable) AS Usuario_Resguardo_Destino,
+									(select top 1  Desc_Centro_de_costos from siga_cat_centro_de_costos where (select top 1 HR.Centro_Costos from siga_historico_reubicacion HR where HR.Id_Activo_Reubicacion=SR.Id_Activo_Reubicacion)=siga_cat_centro_de_costos.Id_Centros_de_costos) AS Centro_Costo_Procedencia,
+									(select top 1  Desc_Centro_de_costos from siga_cat_centro_de_costos CC where CC.Id_Centros_de_costos=SR.Centro_Costos) AS Centro_Costo_Destino,
+									(select top 1  Nombre_Usuario from siga_usuarios SU where SU.Id_Usuario=SR.Usr_Inser) AS Usuario_Solicitante_Reubicacion,
+
 									Ubic_Especifica,
 									(select Nom_Area from siga_catareas T where T.Id_Area=SR.Id_Area) as Id_AreaReu,SR.Fech_Inser as Fecha_Reubicacion,";
 				}
@@ -707,9 +772,9 @@
 				*/
 				// Ejecución de la sentencia de consulta
 				$reader = $conn->execute($sql);
-				echo "</pre>";
-				echo $sql;
-				echo "<pre>";
+				//echo "</pre>";
+				//echo $sql;
+				//echo "<pre>";
 				if($reader) {
 					// Recorre los registros encontrados
 					while($row = $_proveedor->fetch_array($reader, 0)) {
@@ -732,9 +797,11 @@
 							"TipoActivo" => $row["TipoActivo"],
 							"DescCorta" => $row["DescCorta"],
 							"Nombre_Completo" => $row["Nombre_Completo"],
+							"ParticipaPre" => $row["ParticipaPre"],
 							"Num_Empleado" => $row["Num_Empleado"],
 							"Id_Ubic_Prim" => $row["Id_Ubic_Prim"],
 							"Id_Ubic_Sec" => $row["Id_Ubic_Sec"],
+							"Id_ActivoPadre" => $row["Id_ActivoPadre"],
 							"UbicacionPrimariaDestino" => $row["UbicacionPrimariaDestino"],
 							"UbicacionSecundariaDestino" => $row["UbicacionSecundariaDestino"],
 							"UbicacionEspecifica" => $row["UbicacionEspecifica"],
@@ -776,6 +843,13 @@
 							"UbicacionSecundariaReu" => $row["UbicacionSecundariaReu"],
 							"Ubic_Especifica" => $row["Ubic_Especifica"],
 							"Id_AreaReu" =>$row["Id_AreaReu"],
+							"Ubic_Especifica_Procedencia" =>$row["Ubic_Especifica_Procedencia"],
+							"Ubic_Especifica_Destino" =>$row["Ubic_Especifica_Destino"],
+							"Usuario_Resguardo_Procedencia" => $row["Usuario_Resguardo_Procedencia"],
+							"Usuario_Resguardo_Destino" => $row["Usuario_Resguardo_Destino"],
+							"Centro_Costo_Procedencia" => $row["Centro_Costo_Procedencia"],
+							"Centro_Costo_Destino" => $row["Centro_Costo_Destino"],
+							"Usuario_Solicitante_Reubicacion" => $row["Usuario_Solicitante_Reubicacion"],
 
 							/* Proveedores */
 							"NumOrdenCompra" => $row["NumOrdenCompra"],

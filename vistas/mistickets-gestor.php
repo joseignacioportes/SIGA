@@ -3968,7 +3968,14 @@ gestores_ejecutantes();
 				},"visible": false
 			},
 			{"width": "4%","data": "Id_Solicitud"},
-			{"width": "5%","data": "Fecha"},
+			//{"width": "5%","data": "Fecha"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:none">'+obj.Fecha_Num+'</span><br>';
+					Fecha+= obj.Fecha;
+					return Fecha;
+				}
+			},
 			{"width": "6%","data": function (obj) {
 					
 					var Estatus = '';
@@ -4195,8 +4202,22 @@ gestores_ejecutantes();
 				},"visible": false
 			},
 			{ "width": "4%","data": "Id_Solicitud"},
-			{"width": "5%","data": "Fecha"},
-			{ "width": "5%","data": "Fecha_Seguimiento"},
+			//{"width": "5%","data": "Fecha"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:none">'+obj.Fecha_Num+'</span><br>';
+					Fecha+= obj.Fecha;
+					return Fecha;
+				}
+			},
+			//{ "width": "5%","data": "Fecha_Seguimiento"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:none">'+obj.Fecha_Seguimiento_Num+'</span><br>';
+					Fecha+= obj.Fecha_Seguimiento;
+					return Fecha;
+				}
+			},
 			{ "width": "6%","data": function (obj) {
 					var Estatus_Proceso="";
 					if(obj.Id_Estatus_Proceso==2){
@@ -4393,9 +4414,30 @@ gestores_ejecutantes();
 				},"visible": false
 			},
 			{ "width": "4%","data": "Id_Solicitud"},
-			{"width": "5%","data": "Fecha"},
-			{ "width": "5%","data": "Fecha_Seguimiento"},
-			{ "width": "5%","data": "Fecha_Esp_Cierre"},
+			//{"width": "5%","data": "Fecha"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:none">'+obj.Fecha_Num+'</span><br>';
+					Fecha+= obj.Fecha;
+					return Fecha;
+				}
+			},
+			//{ "width": "5%","data": "Fecha_Seguimiento"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:none">'+obj.Fecha_Seguimiento_Num+'</span><br>';
+					Fecha+= obj.Fecha_Seguimiento;
+					return Fecha;
+				}
+			},
+			//{ "width": "5%","data": "Fecha_Esp_Cierre"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:none">'+obj.Fecha_Esp_Cierre_Num+'</span><br>';
+					Fecha+= obj.Fecha_Esp_Cierre;
+					return Fecha;
+				}
+			},
 			{ "width": "6%","data": function (obj) {
 					var Estatus_Proceso="";
 					
@@ -4556,10 +4598,38 @@ gestores_ejecutantes();
 				}
 			},
 			{ "width": "4%", "data": "Id_Solicitud"},
-			{ "width": "5%","data": "Fecha"},
-			{ "width": "5%","data": "Fecha_Seguimiento"},
-			{ "width": "5%","data": "Fecha_Esp_Cierre"},
-			{ "width": "5%", "data": "Fecha_Cierre"},
+			//{"width": "5%","data": "Fecha"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:inline">'+obj.Fecha_Num+'</span><br>';
+					Fecha+= obj.Fecha;
+					return Fecha;
+				}
+			},
+			//{ "width": "5%","data": "Fecha_Seguimiento"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:inline">'+obj.Fecha_Seguimiento_Num+'</span><br>';
+					Fecha+= obj.Fecha_Seguimiento;
+					return Fecha;
+				}
+			},
+			//{ "width": "5%","data": "Fecha_Esp_Cierre"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:inline">'+obj.Fecha_Esp_Cierre_Num+'</span><br>';
+					Fecha+= obj.Fecha_Esp_Cierre;
+					return Fecha;
+				}
+			},
+			//{ "width": "5%", "data": "Fecha_Cierre"},
+			{"width": "5%","data": function (obj) {
+					
+					let Fecha = '<span style="display:inline">'+obj.Fecha_Cierre_Num+'</span><br>';
+					Fecha+= obj.Fecha_Cierre;
+					return Fecha;
+				}
+			},
 			{ "width": "6%", "data": function (obj) {
 					var Estatus_Proceso="";
 					
